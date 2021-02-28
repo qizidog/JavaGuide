@@ -214,10 +214,12 @@ final V put(K key, int hash, V value, boolean onlyIfAbsent) {
                 e = e.next;
             }
             else {
-                // first 有值没说明 index 位置已经有值了，有冲突，链表头插法。
+                // e==null，说明Segment在该下标位置处没有元素，或者已经遍历到链表的末端，仍然没有找到与插入key相同的键值对，链表头插法
                 if (node != null)
+                    // node != null，说明在scanAndLockForPut()方法中已经成功提前创建好了node，不再重复创建，直接头插
                     node.setNext(first);
                 else
+                    // 否则，创建node节点，并执行头插
                     node = new HashEntry<K,V>(hash, key, value, first);
                 int c = count + 1;
                 // 容量大于扩容阀值，小于最大容量，进行扩容
